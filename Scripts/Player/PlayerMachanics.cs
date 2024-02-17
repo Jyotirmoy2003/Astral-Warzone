@@ -236,6 +236,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
 
     public void Heal(float amount)
     {
+        if(!photonView.IsMine) return;
         curretHealth += amount;
         if (curretHealth >= health) curretHealth = health;
        healthChangeEvent.Raise(this,curretHealth);
