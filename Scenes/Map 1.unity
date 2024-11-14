@@ -1499,6 +1499,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3258649686975772956, guid: c651f5b808ce6e04594aa6a92af88a11, type: 3}
+      propertyPath: m_Name
+      value: TimmerHolder
+      objectReference: {fileID: 0}
     - target: {fileID: 3797964866780033785, guid: c651f5b808ce6e04594aa6a92af88a11, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2937,6 +2941,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8646304735758704044, guid: 0f482c8e40a1964438252d70b25cb2f0, type: 3}
+      propertyPath: onlocalPlayerCached
+      value: 
+      objectReference: {fileID: 11400000, guid: 74b74124081ad3f4cb21b6dad7beb64e, type: 2}
     - target: {fileID: 8646304735758704045, guid: 0f482c8e40a1964438252d70b25cb2f0, type: 3}
       propertyPath: m_RootOrder
       value: 3

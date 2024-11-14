@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Photon.Pun;
+using TMPro.Examples;
 
 
 public class UIController : MonoBehaviour
@@ -20,11 +21,19 @@ public class UIController : MonoBehaviour
     public GameObject endScreen;
 
     public TMP_Text timerText;
+    public KillLog killLogprefab;
+    public Transform killLogParent;
 
     public GameObject optionsScreen;
     [SerializeField] KeyCode pauseKey = KeyCode.Escape;
     [SerializeField] GameEvent OnPressedSettings;
 
+    [Space]
+    [Header("Damage Indicator ")]
+    [SerializeField] List<DamageIndicator> damageIndicators= new List<DamageIndicator>();
+    [SerializeField] DamageIndicator damageIndicatorPrefab;
+    [SerializeField] Transform damageIndicatorContainer;
+    private
     
 
 
@@ -33,6 +42,20 @@ public class UIController : MonoBehaviour
         instance=this;
        
     }
+    void Start()
+    {
+        GeneratePool();
+    }
+    void GeneratePool()
+   {
+        for(int i=0;i<10;i++)
+        {
+            DamageIndicator obj = Instantiate(damageIndicatorPrefab,damageIndicatorContainer);
+//            obj.localPlayer=PlayerSpawner.instance.GetlocalPlayer().transform;
+            damageIndicators.Add(obj);
+            obj.gameObject.SetActive(false);
+        }
+   }
 
     void Update()
     {
@@ -58,6 +81,34 @@ public class UIController : MonoBehaviour
         {
             optionsScreen.SetActive(false);
             OnPressedSettings.Raise(this, false);
+        }
+    }
+
+    public void ShowkillLog(string text,float duration)
+    {
+        Instantiate(killLogprefab,killLogParent).GetComponent<KillLog>().Init(text, duration);
+    }
+
+    public void ShowDamageIndicator(Vector3 location)
+    {
+        foreach(DamageIndicator item in damageIndicators)
+        {
+            if(!item.gameObject.activeSelf)
+            {
+                //item.Init(location);
+                break;
+            }
+        }
+    }
+     public void ShowDamageIndicator(int index)
+    {
+        foreach(DamageIndicator item in damageIndicators)
+        {
+            if(!item.gameObject.activeSelf)
+            {
+                item.Init(index);
+                break;
+            }
         }
     }
 

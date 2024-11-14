@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
+using System.Linq;
 
 public class PlayerMachanics : MonoBehaviourPunCallbacks
 {
@@ -34,7 +35,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
     private Camera cam;
     private PlayerController pc;
     private MouseLook mouseLook;
-
+    
 
 
 
@@ -45,6 +46,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
         cam = Camera.main;
         pv.RPC("SetGun",RpcTarget.All,selectedGun);
         
+        PlayerSpawner.instance.Init();
         if(photonView.IsMine) 
         {
             mouseLook = GetComponent<MouseLook>();
@@ -53,6 +55,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
             slider.SetMax(maxHeat);
             slider.SetValue(heatCounter);
             ResetHealth();
+            
         }else{
             gunHolder.parent=modelGunPoint;
             gunHolder.localPosition=Vector3.zero;
@@ -62,6 +65,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
         playerObj.GetComponent<Renderer>().material = allSkins[pv.Owner.ActorNumber % allSkins.Length];
     }
 
+    
    
     void Update()
     {
@@ -180,7 +184,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
 
             if (hit.collider.CompareTag("Player"))
             {
-                hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber);
+                hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber,photonView.OwnerActorNr);
                 PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
             }
             else
@@ -213,12 +217,12 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void DealDamage(float amount,string damager,int actor)
+    public void DealDamage(float amount,string damager,int actorgotKilled,int actorKiller)
     {
-        TakeDamage(amount,damager,actor);
+        TakeDamage(amount,damager,actorgotKilled,actorKiller);
     }
 
-    void TakeDamage(float amount,string damager,int actor)
+    void TakeDamage(float amount,string damager,int actorgotKilled,int actorkiller)
     {
         if(photonView.IsMine)
         {   
@@ -226,13 +230,27 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
            healthChangeEvent.Raise(this,curretHealth);
             if (curretHealth <= 0)
             {
-                PlayerSpawner.instance.Die(damager);
-                MatchManager.instance.UpdatePlayerSend(actor, 0, 1);
+                //update Kill count
+                PlayerSpawner.instance.Die(damager,actorgotKilled,actorkiller);
+                MatchManager.instance.UpdatePlayerSend(actorgotKilled, 0, 1,actorkiller,actorgotKilled);
             }
             if (gotHitAudio.isPlaying) return;
             gotHitAudio.Play();
+
+            //show damage Indicator to local player
+            for(int i=0; i<PlayerSpawner.instance.allPlayersinRoom.Length;i++)
+            {
+                if(PlayerSpawner.instance.allPlayersinRoom[i].photonView.OwnerActorNr==actorkiller)
+                {
+                    //UIController.instance.ShowDamageIndicator(PlayerSpawner.instance.allPlayersinRoom[i].playerTransform.position);
+                    UIController.instance.ShowDamageIndicator(i);
+                }
+            }
+            
         }
     }
+
+    
 
     public void Heal(float amount)
     {

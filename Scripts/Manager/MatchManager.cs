@@ -233,9 +233,22 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
         StateCheck();
     }
 
-    public void UpdatePlayerSend(int actorSending, int statToUpdate, int amountToChange)
+    // public void UpdatePlayerSend(int actorSending, int statToUpdate, int amountToChange)
+    // {
+    //     object[] package = new object[] { actorSending, statToUpdate, amountToChange };
+
+    //     PhotonNetwork.RaiseEvent(
+    //         (byte)EventCodes.UpdateStats,
+    //         package,
+    //         new RaiseEventOptions { Receivers = ReceiverGroup.All },
+    //         new SendOptions { Reliability = true }
+    //         );
+    // }
+    public void UpdatePlayerSend(int actorSending, int statToUpdate, int amountToChange,int actorGotKilled,int actorKilled)
     {
-        object[] package = new object[] { actorSending, statToUpdate, amountToChange };
+       
+        object[] package = new object[] { actorSending, statToUpdate, amountToChange,actorGotKilled,actorGotKilled };
+        
 
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.UpdateStats,
@@ -249,11 +262,14 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
         int actor = (int)dataReceived[0];
         int statType = (int)dataReceived[1];
         int amount = (int)dataReceived[2];
+        int actorGotKilled = (int)dataReceived[3];
+        int actorKilled = (int)dataReceived[4];
 
         for (int i = 0; i < allPlayers.Count; i++)
         {
             if (allPlayers[i].actor == actor)
             {
+                
                 switch (statType)
                 {
                     case 0: //kills
@@ -262,6 +278,17 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
 
                     case 1: //deaths
                         allPlayers[i].deaths += amount;
+                        //if(actorKilled==-1) return;
+                        Debug.Log("Killer Actor: "+actorKilled + "Actor got Killed"+ actorGotKilled +"And "+actor);
+                        for(int j=0;j<allPlayers.Count;j++)
+                        {
+                            if(allPlayers[j].actor == actorKilled)
+                            {
+                                UIController.instance.ShowkillLog(allPlayers[i].name+" was killed by "+allPlayers[j].name,3f);
+                                break;
+                            }
+                        }
+                        //UIController.instance.ShowkillLog(allPlayers[i].name+" was killed",3f);
                         break;
                 }
 
@@ -278,6 +305,7 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
                 break;
             }
         }
+       
         ScoreCheck();
     }
     //Starting a new match send Info

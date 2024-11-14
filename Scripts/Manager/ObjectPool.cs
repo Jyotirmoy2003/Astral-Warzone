@@ -14,12 +14,11 @@ public class ObjectPool : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        Debug.Log("Awake is Called");
     }
 
     private void OnEnable()
     {
-        Debug.Log("OnEnabled Is Called");
+        
     }
 
 
@@ -29,7 +28,6 @@ public class ObjectPool : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Start is Called");
         GeneratePool();
     }
 
