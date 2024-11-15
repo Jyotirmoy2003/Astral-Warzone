@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8665404550656306992}
   - component: {fileID: 8665404550656307007}
+  - component: {fileID: 2861190486573508617}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -50,3 +51,17 @@ MonoBehaviour:
   state: 0
   waitAfterEnding: 5
   perpetual: 1
+  matchLength: 180
+--- !u!114 &2861190486573508617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8665404550656307006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bade504fcf4ff943849219709a84e14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pfDamagePopup: {fileID: 5986414993156837998, guid: 14ae02eef7ad0f044aa89d8d842bb2c4, type: 3}

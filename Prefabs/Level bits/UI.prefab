@@ -375,7 +375,7 @@ GameObject:
   - component: {fileID: 5248176437890624220}
   - component: {fileID: 350409366394971451}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: TimmerHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -56,8 +56,8 @@ MonoBehaviour:
   DamagingActor: {fileID: 0}
   DamageImagePivot: {fileID: 9011435572339602776}
   DamageImageCanvas: {fileID: 3138570469295372608}
-  fadeTime: 0.3
-  canvasDuration: 2
+  fadeTime: 0.1
+  canvasDuration: 0.5
   offset: 0
 --- !u!225 &3138570469295372608
 CanvasGroup:

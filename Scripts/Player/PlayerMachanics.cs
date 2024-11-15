@@ -35,7 +35,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
     private Camera cam;
     private PlayerController pc;
     private MouseLook mouseLook;
-    
+
 
 
 
@@ -109,7 +109,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
             if(Input.GetMouseButtonDown(0) && shotCounter<=0) Shoot();
             if(Input.GetMouseButton(0) && allGuns[selectedGun].IsAutomatic && shotCounter<=0)
             {
-                    Shoot();
+                Shoot();
             }
             else
             {
@@ -186,6 +186,9 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
             {
                 hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber,photonView.OwnerActorNr);
                 PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
+                //show damage pop
+                
+                DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage);
             }
             else
             {
@@ -195,6 +198,8 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
                 StartCoroutine(DeactivateObject(tempBulletImpact.gameObject));
                 //Destroy(Instantiate(bulletImpact, hit.point + (hit.normal * 0.002f), Quaternion.LookRotation(hit.normal, Vector3.up)), 3f);
             }
+            
+          // DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage);
         }
 
         shotCounter=allGuns[selectedGun].rateOfFire;

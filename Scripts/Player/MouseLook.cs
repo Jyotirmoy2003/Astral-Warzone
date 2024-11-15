@@ -28,6 +28,7 @@ public class MouseLook : MonoBehaviourPunCallbacks
     void Update()
     {
        
+        if(Cursor.lockState==CursorLockMode.None) return;
 
         mouseInput =new Vector2(Input.GetAxisRaw("Mouse X"),Input.GetAxisRaw("Mouse Y"))*mouseSensitivity;
         if(IsRicoil)

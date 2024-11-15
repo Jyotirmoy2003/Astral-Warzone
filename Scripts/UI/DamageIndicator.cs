@@ -25,10 +25,16 @@ public class DamageIndicator : MonoBehaviour
 
     void UpdateWhenActive()
     {
-        if(!PlayerSpawner.instance.localPlayer) return;
+        if(!PlayerSpawner.instance.localPlayer)
+        {
+            Deactivate();
+            return;
+        } 
+        
         DamageLocation=PlayerSpawner.instance.allPlayersinRoom[damagingActorIndex].playerTransform.position;
         DamageLocation.y = PlayerSpawner.instance.localPlayer.position.y;
-        Debug.Log("Location: "+DamageLocation+ "local Player: "+PlayerSpawner.instance.localPlayer+"Damaging Actor:  "+PlayerSpawner.instance.allPlayersinRoom[damagingActorIndex].playerTransform);
+       
+        //calculate dirction and angle
         Vector3 Direction =(DamageLocation - PlayerSpawner.instance.localPlayer . position) . normalized;
         float angle=(Vector3.SignedAngle(Direction,PlayerSpawner.instance.localPlayer.forward,Vector3.up));
         angle+=offset;
@@ -51,13 +57,13 @@ public class DamageIndicator : MonoBehaviour
     void End()
     {
         DamageImageCanvas.DOFade(fadeTime,0);
-        updateFunDel=new util().NullFun;
     }
 
     void Deactivate()
     {
         
         this.gameObject.SetActive(false);
+        updateFunDel=new util().NullFun;
     }
 
     public void ListentolocalPlayerCached(Component sender,object data)
