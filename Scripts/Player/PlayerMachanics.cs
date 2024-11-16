@@ -184,11 +184,21 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
 
             if (hit.collider.CompareTag("Player"))
             {
-                hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber,photonView.OwnerActorNr);
+                
                 PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
                 //show damage pop
+                if(hit.point.y>(hit.collider.transform.position.y+0.2f)) 
+                {
+                    //Head shot
+                    Debug.Log(hit.point);
+                    hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage*2, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber,photonView.OwnerActorNr);
+                    DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage*2,true);
+                }else{
+                    //Normal Shot
+                    hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber,photonView.OwnerActorNr);
+                    DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage,false);
+                }
                 
-                DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage);
             }
             else
             {
@@ -199,7 +209,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
                 //Destroy(Instantiate(bulletImpact, hit.point + (hit.normal * 0.002f), Quaternion.LookRotation(hit.normal, Vector3.up)), 3f);
             }
             
-          // DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage);
+           //DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage,false);
         }
 
         shotCounter=allGuns[selectedGun].rateOfFire;

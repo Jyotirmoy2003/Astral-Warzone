@@ -8,22 +8,22 @@ public class DamagePopup : MonoBehaviour
 {
     private static int sortingOrder;
 
-    private const float DISAPPEAR_TIMER_MAX = 0.8f;
+    private const float DISAPPEAR_TIMER_MAX = 0.6f;
     private TextMeshPro textmesh;
     private NoArgumentFun updateDel=new util().NullFun;
     private float disappearTimer;
     private Color textColor;
     private Vector3 moveVector;
-    private Vector3 damagePopupOffset=new Vector3(-1f,0,0f);
+ 
 
 
 
-    public static DamagePopup Create (Vector3 position, int damageAmount) 
+    public static DamagePopup Create (Vector3 position, int damageAmount,bool isCritical) 
     {
         Transform damagePopupTransform = Instantiate(GameAssets._i.pfDamagePopup, position, Quaternion . identity) ;
 
         DamagePopup damagePopup  = damagePopupTransform.GetComponent<DamagePopup>();
-        damagePopup. Setup (damageAmount) ;
+        damagePopup. Setup (damageAmount,isCritical) ;
         return damagePopup ;
     }
 
@@ -31,13 +31,22 @@ public class DamagePopup : MonoBehaviour
         textmesh=transform. GetComponent<TextMeshPro>();
     }
 
-    public void Setup(int damageAmount) 
+    public void Setup(int damageAmount,bool isCritical) 
     {
 
         textmesh.SetText(damageAmount.ToString());
-        textColor=textmesh.color;
-
         disappearTimer = DISAPPEAR_TIMER_MAX;
+        updateDel=ActivateUpdate;
+        if(isCritical)
+        {
+            textColor=new Color(1,0.07f,0.8f);
+            textmesh.fontSize=45f;
+        }else{
+            textColor=new Color(1,0.5f,0.08f);
+            textmesh.fontSize=36f;
+        }
+
+        textmesh.color = textColor;
 
         sortingOrder++;
         textmesh.sortingOrder = sortingOrder;
@@ -49,7 +58,7 @@ public class DamagePopup : MonoBehaviour
     }
     void SetForward()
     {
-        transform.localPosition+=damagePopupOffset;
+        //transform.localPosition+=damagePopupOffset;
         updateDel=ActivateUpdate;
 
     }
@@ -64,21 +73,21 @@ public class DamagePopup : MonoBehaviour
 
         if (disappearTimer > DISAPPEAR_TIMER_MAX * .5f) {
             // First half of the popup lifetime
-            float increaseScaleAmount = 1f;
+            float increaseScaleAmount = 0.4f;
             transform.localScale += Vector3.one * increaseScaleAmount * Time.deltaTime;
         } else {
             // Second half of the popup lifetime
-            float decreaseScaleAmount = 0.5f;
+            float decreaseScaleAmount = 0.4f;
             transform.localScale -= Vector3.one * decreaseScaleAmount * Time.deltaTime;
         }
 
         disappearTimer -= Time.deltaTime;
-        if (disappearTimer < 0) {
+        if (disappearTimer <= 0) {
             // Start disappearing
             float disappearSpeed = 3f;
             textColor.a -= disappearSpeed * Time.deltaTime;
             textmesh.color = textColor;
-            if (textColor.a < 0) {
+            if (textColor.a <= 0) {
                 // updateDel=new util().NullFun;
                 // this.gameObject.SetActive(false);
                 Destroy(this.gameObject);
