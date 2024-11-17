@@ -9,21 +9,24 @@ using TMPro.Examples;
 public class UIController : MonoBehaviour
 {
     public static UIController instance;
-    public TMP_Text overHeatedText;
+    public GameObject overHeatedText;
     public GameObject deathScreen;
     public TMP_Text desthMessage;
     public SliderBar healthBar;
     public TMP_Text killsText, deathsText;
-
+    
+    [Space]
+    [Header("Leader Board")]
     public GameObject leaderboard;
     public LeaderboardPlayer leaderboardPlayerDisplay;
 
-    public GameObject endScreen;
 
     public TMP_Text timerText;
     public KillLog killLogprefab;
     public Transform killLogParent;
 
+    [Space]
+    [Header("Settings")]
     public GameObject optionsScreen;
     [SerializeField] KeyCode pauseKey = KeyCode.Escape;
     [SerializeField] GameEvent OnPressedSettings;
@@ -33,7 +36,11 @@ public class UIController : MonoBehaviour
     [SerializeField] List<DamageIndicator> damageIndicators= new List<DamageIndicator>();
     [SerializeField] DamageIndicator damageIndicatorPrefab;
     [SerializeField] Transform damageIndicatorContainer;
-    private
+
+    [Space]
+    [Header("Match End screen")]
+    public GameObject endScreen;
+    public TMP_Text nextMatchStartCountdown_text;
     
 
 

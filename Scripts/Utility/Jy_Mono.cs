@@ -50,7 +50,12 @@ public void NullFun()
 }
 }
 
-
+[System.Serializable]
+public struct Struct_Skin_mat
+{
+    public Material lit;
+    public Material unlit;
+}
 
 public delegate void NoArgumentFun();
 }

@@ -4,12 +4,14 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 using System.Linq;
+using System;
+using Jy_Util;
 
 public class PlayerMachanics : MonoBehaviourPunCallbacks
 {
     
    
-    [SerializeField] float distance=5.0f;
+
     [SerializeField] GameObject bulletImpact,playerHitImpact;
     [SerializeField] SliderBar slider;
     [SerializeField] GameEvent healthChangeEvent;
@@ -20,8 +22,10 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
     [SerializeField] float health, adsZoomSpeed = 5f;
     [SerializeField] GameObject playerObj;
     [SerializeField] Transform modelGunPoint, gunHolder, adsOut, adsIn;
-    [SerializeField] Material[] allSkins;
+    [SerializeField] Struct_Skin_mat[] allSkins;
     [SerializeField] AudioSource gotHitAudio;
+    [Range(1,6)]
+    [SerializeField] float ImmunTime=5f;
 
     private float curretHealth;
     private float muzzleCounter=0;
@@ -35,6 +39,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
     private Camera cam;
     private PlayerController pc;
     private MouseLook mouseLook;
+    private bool isImmun=false;
 
 
 
@@ -61,8 +66,8 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
             gunHolder.localPosition=Vector3.zero;
             gunHolder.localRotation=Quaternion.identity;
         }
-
-        playerObj.GetComponent<Renderer>().material = allSkins[pv.Owner.ActorNumber % allSkins.Length];
+        ActivateImmun();
+        
     }
 
     
@@ -124,7 +129,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
         {
             heatCounter=0;
             IsOverHeated=false;
-            UIController.instance.overHeatedText.gameObject.SetActive(false);
+            UIController.instance.overHeatedText.SetActive(false);
             
         }
         slider.SetValue(heatCounter); //set heat slider
@@ -169,6 +174,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
 
     void Shoot()
     {
+        #region  GUN
         //Add Recoil
         mouseLook.Recoil(true, allGuns[selectedGun].recoilX, allGuns[selectedGun].recoilY);
         //Muzzle Flash
@@ -177,6 +183,21 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
         //if already sound is playing then stop previous
         allGuns[selectedGun].audioSource.Stop();
         allGuns[selectedGun].audioSource.Play();
+
+        shotCounter=allGuns[selectedGun].rateOfFire;
+        //add Heat fun
+        heatCounter+=allGuns[selectedGun].heatPershot;
+        
+        if(heatCounter>=maxHeat)
+        {
+            heatCounter=maxHeat;
+            IsOverHeated=true;
+            gunAnimator.SetTrigger("OverHeat");
+            UIController.instance.overHeatedText.SetActive(true);
+        }
+        #endregion
+
+
         //ray cast and check hit
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit, allGuns[selectedGun].range))
@@ -186,11 +207,11 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
             {
                 
                 PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
+                if(hit.collider.GetComponent<PlayerMachanics>().isImmun) return;
                 //show damage pop
                 if(hit.point.y>(hit.collider.transform.position.y+0.2f)) 
                 {
                     //Head shot
-                    Debug.Log(hit.point);
                     hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage*2, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber,photonView.OwnerActorNr);
                     DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage*2,true);
                 }else{
@@ -205,30 +226,14 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
                 Transform tempBulletImpact = ObjectPool.instance.GetBulletImpact().transform;
                 tempBulletImpact.position = hit.point + (hit.normal * 0.002f);
                 tempBulletImpact.rotation = Quaternion.LookRotation(hit.normal, Vector3.up);
-                StartCoroutine(DeactivateObject(tempBulletImpact.gameObject));
+               // StartCoroutine(DeactivateObject(tempBulletImpact.gameObject));
                 //Destroy(Instantiate(bulletImpact, hit.point + (hit.normal * 0.002f), Quaternion.LookRotation(hit.normal, Vector3.up)), 3f);
             }
             
            //DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage,false);
         }
 
-        shotCounter=allGuns[selectedGun].rateOfFire;
-        //add Heat fun
-        heatCounter+=allGuns[selectedGun].heatPershot;
         
-        if(heatCounter>=maxHeat)
-        {
-            heatCounter=maxHeat;
-            IsOverHeated=true;
-            gunAnimator.SetTrigger("OverHeat");
-            UIController.instance.overHeatedText.gameObject.SetActive(true);
-        }
-    }
-
-    IEnumerator DeactivateObject(GameObject obj)
-    {
-        yield return new WaitForSeconds(3f);
-        obj.SetActive(false);
     }
 
     [PunRPC]
@@ -239,6 +244,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
 
     void TakeDamage(float amount,string damager,int actorgotKilled,int actorkiller)
     {
+        if(isImmun) return; //Dont take damage when player just spawned (Immun)
         if(photonView.IsMine)
         {   
             curretHealth-=amount;
@@ -291,5 +297,19 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
             selectedGun=gunIndex;
             SwitchGun();
         }
+    }
+
+
+    void DisableImmun()
+    {
+        isImmun=false;
+        playerObj.GetComponent<Renderer>().material = allSkins[pv.Owner.ActorNumber % allSkins.Length].lit;
+    }
+
+    void ActivateImmun()
+    {
+        isImmun=true;
+        playerObj.GetComponent<Renderer>().material = allSkins[pv.Owner.ActorNumber % allSkins.Length].unlit;
+        Invoke(nameof(DisableImmun),ImmunTime);
     }
 }

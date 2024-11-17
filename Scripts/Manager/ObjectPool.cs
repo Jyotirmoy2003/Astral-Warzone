@@ -8,6 +8,7 @@ public class ObjectPool : MonoBehaviour
 
     [SerializeField] GameObject bulletImpactObject;
     [SerializeField] int amountOfBulletObjectInPool;
+    private int index=0;
 
     private List<GameObject> bulletImpactPool = new List<GameObject>();
 
@@ -37,23 +38,16 @@ public class ObjectPool : MonoBehaviour
         {
             GameObject obj = Instantiate(bulletImpactObject,transform);
             bulletImpactPool.Add(obj);
-            obj.SetActive(false);
+            obj.SetActive(true);
         }
    }
 
     //get Object 
     public GameObject GetBulletImpact()
     {
-        foreach(GameObject item in bulletImpactPool)
-        {
-            if(!item.activeInHierarchy)
-            {
-                item.SetActive(true);
-                return item;
-            }
-        }
-
-        return null;
+        index=(index+1)%bulletImpactPool.Count;
+        return bulletImpactPool[index];
+        
     }
 
 

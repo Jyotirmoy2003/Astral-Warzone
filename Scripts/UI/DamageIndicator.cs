@@ -49,14 +49,14 @@ public class DamageIndicator : MonoBehaviour
         updateFunDel=UpdateWhenActive;
         //localPlayer=PlayerSpawner.instance.PlayerSpawner.instance.localPlayer;
         
-        DamageImageCanvas.DOFade(fadeTime,1);
+        DamageImageCanvas.DOFade(1,fadeTime);
         Invoke(nameof(End),canvasDuration);
         Invoke(nameof(Deactivate),canvasDuration+1f);
     }
 
     void End()
     {
-        DamageImageCanvas.DOFade(fadeTime,0);
+        DamageImageCanvas.DOFade(0,fadeTime);
     }
 
     void Deactivate()

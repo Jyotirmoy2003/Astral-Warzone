@@ -620,9 +620,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsAutomatic: 1
   rateOfFire: 0.3
-  heatPershot: 2
+  heatPershot: 1.8
   range: 20
-  damage: 20
+  damage: 15
   bar: {fileID: 7308011225280326836}
   muzzleFlash: {fileID: 7613947239772811756}
   adsZoom: 30
@@ -1032,15 +1032,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsAutomatic: 1
-  rateOfFire: 0.1
-  heatPershot: 1
-  range: 20
-  damage: 15
+  rateOfFire: 0.05
+  heatPershot: 0.6
+  range: 30
+  damage: 10
   bar: {fileID: 7308011223795537410}
   muzzleFlash: {fileID: 7613947240033750102}
   adsZoom: 45
-  recoilX: 0.5
-  recoilY: 3
+  recoilX: 1
+  recoilY: 1
   audioSource: {fileID: 6377990225763123725}
 --- !u!82 &6377990225763123725
 AudioSource:
@@ -1310,7 +1310,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef16f306e3751f544ac8b561bbccbe37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 5
   bulletImpact: {fileID: 3421042254670042385, guid: de9ece1d69d9b21409a76aa970c252cb, type: 3}
   playerHitImpact: {fileID: 3421042254670042385, guid: 613c0470994e1cf46af93b5fb97de6f5, type: 3}
   slider: {fileID: 7308011225280326836}
@@ -1332,15 +1331,24 @@ MonoBehaviour:
   adsOut: {fileID: 8645801197149924919}
   adsIn: {fileID: 1381421526818761991}
   allSkins:
-  - {fileID: 2100000, guid: 77c6cb66aedd8614a9d77ea6c7c4df49, type: 2}
-  - {fileID: 2100000, guid: 41928b1c3f87fb74ab84785adb8b26b4, type: 2}
-  - {fileID: 2100000, guid: 74127230361817246951e01ab25b3bc5, type: 2}
-  - {fileID: 2100000, guid: ff33376319e587e4c91204ac427de275, type: 2}
-  - {fileID: 2100000, guid: 7222213491895fe43ad8d5232c3b4b53, type: 2}
-  - {fileID: 2100000, guid: 3212f94e07d1deb45aa6a9a29053538a, type: 2}
-  - {fileID: 2100000, guid: 4baa1a7cf7fd5e54895a5459a1d0a433, type: 2}
-  - {fileID: 2100000, guid: 3cc029f6eccfe434ba9eb087e3e1d33b, type: 2}
+  - lit: {fileID: 2100000, guid: 3212f94e07d1deb45aa6a9a29053538a, type: 2}
+    unlit: {fileID: 2100000, guid: 1a4b5cab3c970d746a48c31e02e8cddf, type: 2}
+  - lit: {fileID: 2100000, guid: ff33376319e587e4c91204ac427de275, type: 2}
+    unlit: {fileID: 2100000, guid: 86fa99c5167d0754a889be4d4e7316c4, type: 2}
+  - lit: {fileID: 2100000, guid: 3cc029f6eccfe434ba9eb087e3e1d33b, type: 2}
+    unlit: {fileID: 2100000, guid: 89bf98521c522e340b586d0ef1f3c094, type: 2}
+  - lit: {fileID: 2100000, guid: 77c6cb66aedd8614a9d77ea6c7c4df49, type: 2}
+    unlit: {fileID: 2100000, guid: 12a281a9abb33e240ad9bb3222abc42e, type: 2}
+  - lit: {fileID: 2100000, guid: 41928b1c3f87fb74ab84785adb8b26b4, type: 2}
+    unlit: {fileID: 2100000, guid: b838d3bfbf59e0f46add81ab77c97621, type: 2}
+  - lit: {fileID: 2100000, guid: 74127230361817246951e01ab25b3bc5, type: 2}
+    unlit: {fileID: 2100000, guid: f158c3342e2153141a7ce538a2deec24, type: 2}
+  - lit: {fileID: 2100000, guid: 7222213491895fe43ad8d5232c3b4b53, type: 2}
+    unlit: {fileID: 2100000, guid: a5f8ad6f183d63546829f222440ef601, type: 2}
+  - lit: {fileID: 2100000, guid: 4baa1a7cf7fd5e54895a5459a1d0a433, type: 2}
+    unlit: {fileID: 2100000, guid: b657caf08ef78144ca0e9c05a7a1d20b, type: 2}
   gotHitAudio: {fileID: 3599271106404838542}
+  ImmunTime: 5
 --- !u!114 &-8479641236241330511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2678,6 +2686,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7308011224016332727}
     m_Modifications:
+    - target: {fileID: 1046021142950935873, guid: 38074321d88bbe3438955d413494dac3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4fb1514716707bd448b685e8594639f2, type: 2}
     - target: {fileID: 1046021142964596801, guid: 38074321d88bbe3438955d413494dac3, type: 3}
       propertyPath: m_Name
       value: Player Character

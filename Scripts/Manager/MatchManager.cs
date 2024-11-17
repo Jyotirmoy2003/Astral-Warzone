@@ -37,13 +37,13 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
     [SerializeField] int killsToWin = 3;
     [SerializeField] Transform mapCamPoint;
     public GameState state = GameState.Waiting;
-    [SerializeField] float waitAfterEnding = 5f;
+    [SerializeField] int waitAfterEnding = 5;
 
     public bool perpetual;
     public float matchLength = 180f;
     private float currentMatchTime;
     private float sendTimer;
-
+    private bool isLoadingMap=false;
     void Start()
     {
         if(!PhotonNetwork.IsConnected)
@@ -57,9 +57,10 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
             if(PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("killToWin"))
                 killsToWin =(int) PhotonNetwork.CurrentRoom.CustomProperties["killToWin"];
             if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("matchLength"))
-                matchLength = ((int)PhotonNetwork.CurrentRoom.CustomProperties["matchLength"]) * 60f;
+                matchLength = ((int)PhotonNetwork.CurrentRoom.CustomProperties["matchLength"])* 60f;
             SetupTimer();
         }
+        isLoadingMap=false;
     }
 
     void Update()
@@ -479,6 +480,10 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
         }
 
         UIController.instance.endScreen.SetActive(true);
+        //Deactivate all other widgets
+        UIController.instance.optionsScreen.SetActive(false);
+        UIController.instance.overHeatedText.SetActive(false);
+
         ShowLeaderboard();
 
         Cursor.lockState = CursorLockMode.None;
@@ -493,7 +498,14 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
 
     private IEnumerator EndCo()
     {
-        yield return new WaitForSeconds(waitAfterEnding);
+        int temp_holding_waitingTime=waitAfterEnding;
+        while(temp_holding_waitingTime>0)
+        {
+            yield return new WaitForSeconds(1);
+            temp_holding_waitingTime--;
+            UIController.instance.nextMatchStartCountdown_text.text="STARTING NEW MATCH IN: "+temp_holding_waitingTime;
+        }
+        //yield return new WaitForSeconds(waitAfterEnding);
         if (!perpetual)
         {
             PhotonNetwork.AutomaticallySyncScene = false;
@@ -501,7 +513,7 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
         }
         else
         {
-            if(PhotonNetwork.IsMasterClient)
+            if(PhotonNetwork.IsMasterClient && !isLoadingMap)
             {
                 if (!Launcher.instance.changeMapBetweenRounds)
                 {
@@ -517,6 +529,7 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
                     }
                     else
                     {
+                        isLoadingMap=true;
                         PhotonNetwork.LoadLevel(Launcher.instance.allMaps[newLevel]);
                     }
                 }
@@ -549,6 +562,7 @@ public class MatchManager : MonoBehaviourPunCallbacks,IOnEventCallback
         if(currentMatchTime<=0)
         {
             state = GameState.Ending;
+            StateCheck();
         }
     }
 }
