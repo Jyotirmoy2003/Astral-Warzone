@@ -202,33 +202,39 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit, allGuns[selectedGun].range))
         {
+            
 
             if (hit.collider.CompareTag("Player"))
-            {
-                
-                PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
-                if(hit.collider.GetComponent<PlayerMachanics>().isImmun) return;
-                //show damage pop
-                if(hit.point.y>(hit.collider.transform.position.y+0.2f)) 
                 {
-                    //Head shot
-                    hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage*2, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber,photonView.OwnerActorNr);
-                    DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage*2,true);
-                }else{
-                    //Normal Shot
-                    hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber,photonView.OwnerActorNr);
-                    DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage,false);
+
+                    PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
+                    if (hit.collider.GetComponent<PlayerMachanics>().isImmun) return;
+                    //show damage pop
+                    if (hit.point.y > (hit.collider.transform.position.y + 0.2f))
+                    {
+                        //Head shot
+                        hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage * 2, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber, photonView.OwnerActorNr);
+                        DamagePopup.Create(hit.point + new Vector3(0f, 0.5f, 0f), (int)allGuns[selectedGun].damage * 2, true);
+                    }
+                    else
+                    {
+                        //Normal Shot
+                        hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber, photonView.OwnerActorNr);
+                        DamagePopup.Create(hit.point + new Vector3(0f, 0.5f, 0f), (int)allGuns[selectedGun].damage, false);
+                    }
+
+                }else if (hit.collider.TryGetComponent<IDamageable>(out var damageable))
+                {
+                    damageable.TakeDamage(allGuns[selectedGun].damage);
                 }
-                
-            }
-            else
-            {
-                Transform tempBulletImpact = ObjectPool.instance.GetBulletImpact().transform;
-                tempBulletImpact.position = hit.point + (hit.normal * 0.002f);
-                tempBulletImpact.rotation = Quaternion.LookRotation(hit.normal, Vector3.up);
-               // StartCoroutine(DeactivateObject(tempBulletImpact.gameObject));
-                //Destroy(Instantiate(bulletImpact, hit.point + (hit.normal * 0.002f), Quaternion.LookRotation(hit.normal, Vector3.up)), 3f);
-            }
+                else
+                {
+                    Transform tempBulletImpact = ObjectPool.instance.GetBulletImpact().transform;
+                    tempBulletImpact.position = hit.point + (hit.normal * 0.002f);
+                    tempBulletImpact.rotation = Quaternion.LookRotation(hit.normal, Vector3.up);
+                    // StartCoroutine(DeactivateObject(tempBulletImpact.gameObject));
+                    //Destroy(Instantiate(bulletImpact, hit.point + (hit.normal * 0.002f), Quaternion.LookRotation(hit.normal, Vector3.up)), 3f);
+                }
             
            //DamagePopup.Create(hit.point+new Vector3(0f,0.5f,0f),(int)allGuns[selectedGun].damage,false);
         }

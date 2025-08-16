@@ -12,8 +12,8 @@ public class SettingManager : MonoBehaviour
     void Start()
     {
         setttingsPanel.SetActive(false);
-        musicSlided.value = PlayerPrefs.GetFloat("music", 50);
-        sfxSlider.value = PlayerPrefs.GetFloat("sfx", 50);
+        musicSlided.value = PlayerPrefs.GetFloat("music", 0);
+        sfxSlider.value = PlayerPrefs.GetFloat("sfx", 0);
         mousesensitivitySlider.value = PlayerPrefs.GetFloat("sensitivity", 1f);
         ApplyChanges();
     }
