@@ -1157,7 +1157,7 @@ GameObject:
   - component: {fileID: 3833478725617310851}
   - component: {fileID: 7667646257520530406}
   - component: {fileID: 827936177364229872}
-  - component: {fileID: 7527381389950758089}
+  - component: {fileID: 8557925941017546797}
   m_Layer: 0
   m_Name: Player using
   m_TagString: Player
@@ -1479,7 +1479,7 @@ MonoBehaviour:
   playerController: {fileID: 7308011224016332723}
   playerMachanics: {fileID: 7308011224016332686}
   playerTransform: {fileID: 7308011224016332727}
---- !u!114 &7527381389950758089
+--- !u!114 &8557925941017546797
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
