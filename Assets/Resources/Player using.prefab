@@ -1252,8 +1252,8 @@ MonoBehaviour:
   sprintSpeed: 0.02
   crouchSpeed: 0.006
   JumpForce: 1
-  airMultiplier: 1.002
-  gravity: -9.8
+  airMultiplier: 1
+  gravity: -11
   groundCheck: {fileID: 7308011224087779425}
   groundDistance: 0.3
   ground:
