@@ -26,6 +26,9 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
     [SerializeField] AudioSource gotHitAudio;
     [Range(1,6)]
     [SerializeField] float ImmunTime=5f;
+    [Header("Damage")]
+    [SerializeField] int headshotDamageMultiplier = 3;
+    
 
     private float curretHealth;
     private float muzzleCounter=0;
@@ -40,6 +43,7 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
     private PlayerController pc;
     private MouseLook mouseLook;
     private bool isImmun=false;
+    public static Action<bool> A_PlayerShooting;
 
 
 
@@ -112,13 +116,14 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
          if(!IsOverHeated)
         {
             if(Input.GetMouseButtonDown(0) && shotCounter<=0) Shoot();
-            if(Input.GetMouseButton(0) && allGuns[selectedGun].IsAutomatic && shotCounter<=0)
+            if (Input.GetMouseButton(0) && allGuns[selectedGun].IsAutomatic && shotCounter <= 0)
             {
                 Shoot();
             }
             else
             {
                 mouseLook.Recoil(false, 0, 0);
+                A_PlayerShooting?.Invoke(false);
             }
             heatCounter-=coolRate*Time.deltaTime;
         }else{ //cool down weapon
@@ -187,17 +192,18 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
         shotCounter=allGuns[selectedGun].rateOfFire;
         //add Heat fun
         heatCounter+=allGuns[selectedGun].heatPershot;
-        
-        if(heatCounter>=maxHeat)
+
+        if (heatCounter >= maxHeat)
         {
-            heatCounter=maxHeat;
-            IsOverHeated=true;
+            heatCounter = maxHeat;
+            IsOverHeated = true;
             gunAnimator.SetTrigger("OverHeat");
             UIController.instance.overHeatedText.SetActive(true);
+            A_PlayerShooting?.Invoke(false);
         }
         #endregion
 
-
+        A_PlayerShooting?.Invoke(true);
         //ray cast and check hit
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit, allGuns[selectedGun].range))
@@ -213,8 +219,8 @@ public class PlayerMachanics : MonoBehaviourPunCallbacks
                     if (hit.point.y > (hit.collider.transform.position.y + 0.2f))
                     {
                         //Head shot
-                        hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage * 2, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber, photonView.OwnerActorNr);
-                        DamagePopup.Create(hit.point + new Vector3(0f, 0.5f, 0f), (int)allGuns[selectedGun].damage * 2, true);
+                        hit.collider.gameObject.GetComponent<PhotonView>().RPC("DealDamage", RpcTarget.All, allGuns[selectedGun].damage * headshotDamageMultiplier, photonView.Owner.NickName, PhotonNetwork.LocalPlayer.ActorNumber, photonView.OwnerActorNr);
+                        DamagePopup.Create(hit.point + new Vector3(0f, 0.5f, 0f), (int)allGuns[selectedGun].damage * headshotDamageMultiplier, true);
                     }
                     else
                     {

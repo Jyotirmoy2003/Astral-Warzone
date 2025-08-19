@@ -1,13 +1,16 @@
 
 using UnityEngine;
 using Photon.Pun;
+using Game_Input;
 
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviourPunCallbacks
 {
+    [Header("Input")]
+    [SerializeField] InputReader gameInput;
     #region  Veriables
-   [SerializeField] float walkSpeed=5f,sprintSpeed=10f,crouchSpeed=3f,JumpForce=0.5f,airMultiplier=0.4f,gravity=-9.8f;
+    [SerializeField] float walkSpeed=5f,sprintSpeed=10f,crouchSpeed=3f,JumpForce=0.5f,airMultiplier=0.4f,gravity=-9.8f;
    [SerializeField] Transform groundCheck;
    [SerializeField] float groundDistance=0.3f;
    [SerializeField] LayerMask ground;
@@ -24,8 +27,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private Vector3 moveDire;
     private CharacterController controller;
     private bool IsGrounded=false;
-    private bool IsCrouching=false;
     private bool IsSprinting=false;
+    private bool isJumping = false;
     private float moveSpeed;
     private Vector3 velocity;
    private Transform myTransform;
@@ -53,6 +56,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             controller.enabled = false;
         }
+        else
+        {
+            SubribeToInput(true);
+        }
 
        
         
@@ -71,6 +78,50 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         Move();
     }
+    #endregion
+
+    #region INPUT
+
+    void SubribeToInput(bool subcribe)
+    {
+        if (subcribe)
+        {
+            gameInput.OnMoveEvent += PlayerMoveInput;
+            gameInput.OnJumpEvent += JumpInput;
+            gameInput.OnRunEvent += SprintInput;
+        }
+        else
+        {
+            gameInput.OnMoveEvent -= PlayerMoveInput;
+            gameInput.OnJumpEvent -= JumpInput;
+            gameInput.OnRunEvent -= SprintInput;
+        }
+    }
+    void PlayerMoveInput(Vector2 moveDire)
+    {
+        this.moveDire = moveDire;
+    }
+
+    void SprintInput(bool pressed)
+    {
+        if (pressed)
+        {
+            state = MovementState.sprint;
+            moveSpeed = sprintSpeed;
+            IsSprinting = true;
+        }
+        else
+        {
+            moveSpeed = walkSpeed;
+            IsSprinting = false;
+        }
+    }
+
+    void JumpInput(bool pressed)
+    {
+        isJumping = pressed;
+    }
+
     #endregion
 
     void PlayerInput()
@@ -119,7 +170,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     void Jump()
 	{
-		if(Input.GetKey(jumpKey) && IsGrounded)
+		if(isJumping && IsGrounded)
 		{
             velocity.y=Mathf.Sqrt(JumpForce*-2f*gravity);
             
@@ -147,7 +198,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             state=MovementState.crouch;
             moveSpeed=crouchSpeed;
-            IsCrouching=true;
+            //IsCrouching=true;
         }
         //Mode:-walking 
         else if(IsGrounded && !IsSprinting)
@@ -167,11 +218,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
          //Mode:-resetSpeed
         if(Input.GetKeyUp(crouchKey))
         {
-            IsCrouching=false;
+            //IsCrouching=false;
         }
         if(Input.GetKeyUp(sprintKey))
         {
-            IsSprinting=false;
+            //IsSprinting=false;
         }
 
         anim.SetBool("grounded", IsGrounded);

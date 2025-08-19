@@ -6662,7 +6662,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 94506cc68af2ecf40aade7a196f68c7a, type: 3}
   - {fileID: 21300000, guid: a5f2dbf7883e1584883cd3972f6690fe, type: 3}
   - {fileID: 21300000, guid: 27977eb6d70dc3d478c8ad4d488fc05c, type: 3}
-  - {fileID: 21300000, guid: 27977eb6d70dc3d478c8ad4d488fc05c, type: 3}
+  - {fileID: 21300000, guid: 3ec0ed31431e6cd40b1975f5bf6d225a, type: 3}
   roomPreviewImg: {fileID: 2109637444}
   propsArrow:
   - {fileID: 812410211}

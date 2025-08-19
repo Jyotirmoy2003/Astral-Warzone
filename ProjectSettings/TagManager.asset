@@ -14,8 +14,8 @@ TagManager:
   - Buildings
   - Destractable
   - PostProcessing
-  - 
-  - 
+  - ShowMiniMap
+  - HideMiniMaP
   - 
   - 
   - 
