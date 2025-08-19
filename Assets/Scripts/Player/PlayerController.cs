@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             velocity.y=-1f;
         }  
-        controller.Move(moveDire.normalized*moveSpeed*10f);
+        controller.Move(moveDire.normalized*moveSpeed*10f *Time.deltaTime);
            
         
          controller.Move(velocity*Time.deltaTime);//Gravity

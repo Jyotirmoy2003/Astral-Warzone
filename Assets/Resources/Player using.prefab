@@ -1463,8 +1463,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameInput: {fileID: 11400000, guid: 2a315893519a1744cb5b6be2bc90f5d0, type: 2}
-  walkSpeed: 0.01
-  sprintSpeed: 0.02
+  walkSpeed: 0.2
+  sprintSpeed: 0.6
   crouchSpeed: 0.006
   JumpForce: 1
   airMultiplier: 1
@@ -1572,7 +1572,7 @@ MonoBehaviour:
     unlit: {fileID: 2100000, guid: b657caf08ef78144ca0e9c05a7a1d20b, type: 2}
   gotHitAudio: {fileID: 3599271106404838542}
   ImmunTime: 5
-  headshotDamageMultiplier: 0
+  headshotDamageMultiplier: 4
 --- !u!114 &-8479641236241330511
 MonoBehaviour:
   m_ObjectHideFlags: 0

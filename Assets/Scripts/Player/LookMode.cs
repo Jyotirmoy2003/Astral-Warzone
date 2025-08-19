@@ -27,7 +27,8 @@ public class LookMode : MonoBehaviour
             vol = Camera.main.GetComponent<PostProcessVolume>();
             nightVision = FindObjectOfType<NightVision>();
             if(nightVision.haveNightVision) SubcribeInput(true);
-            
+            nightVision.RechargeBattery();
+
             vol.profile = normalVison;
         }
         
