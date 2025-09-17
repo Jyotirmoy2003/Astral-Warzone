@@ -2,6 +2,7 @@
 using UnityEngine;
 using Photon.Pun;
 using Game_Input;
+using System;
 
 
 [RequireComponent(typeof(CharacterController))]
@@ -33,8 +34,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private Vector3 velocity;
    private Transform myTransform;
    private MovementState state;
+    private Action updateAc, FixedupdateAc;
 
-    private enum MovementState{
+    private enum MovementState
+    {
         sprint,
         walk,
         crouch,
@@ -59,25 +62,22 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else
         {
             SubribeToInput(true);
+            updateAc += PlayerInput;
+            updateAc += Statehandeler;
+            updateAc += Jump;
+            FixedupdateAc += Move;
         }
 
        
         
     }
 
-    
-    void Update()
-    {
-        if (!photonView.IsMine) return;
-        PlayerInput();
-        Jump();
-        Statehandeler();
-    }
 
-    void FixedUpdate()
-    {
-        Move();
-    }
+    void Update() => updateAc?.Invoke();
+
+
+    void FixedUpdate() => FixedupdateAc?.Invoke();
+   
     #endregion
 
     #region INPUT
